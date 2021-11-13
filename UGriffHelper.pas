@@ -124,13 +124,17 @@ function THeader.GetChordTicks(fraction, dots: integer): integer;
 var
   h: integer;
 begin
-  result := 4*quarterNoteTicks div fraction;
-  h := result;
-  while dots > 0 do
+  result := 0;
+  if fraction > 0 then
   begin
-    h := h div 2;
-    inc(result, h);
-    dec(dots);
+    result := 4*quarterNoteTicks div fraction;
+    h := result;
+    while dots > 0 do
+    begin
+      h := h div 2;
+      inc(result, h);
+      dec(dots);
+    end;
   end;
 end;
 
@@ -178,6 +182,15 @@ var
         Header.measureNom := StrToIntDef(Child1.Value, 4);
       if GetChild('sigD', Child1, Child) then
         Header.measureDenom := StrToIntDef(Child1.Value, 4);
+    end;
+    with Header do
+    begin
+      if quarterNoteTicks <= 0 then
+        quarterNoteTicks := 120;
+      if measureNom < 0 then
+        measureNom := 4;
+      if measureDenom <= 0 then
+        measureDenom := 4;
     end;
   end;
 
@@ -241,6 +254,8 @@ begin
     exit;
   end;
 
+  SetHeader;
+
   // remove all "spanner  with type textline"
   for i := 0 to Staff.Count-1 do
   begin
@@ -264,7 +279,6 @@ begin
     end;
   end;
 
-  SetHeader;
   IsPull := true;
   iStartMeasure := -1;
   iStartChord := 0;

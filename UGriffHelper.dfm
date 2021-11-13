@@ -29,4 +29,30 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
+  object Label2: TLabel
+    Left = 56
+    Top = 233
+    Width = 116
+    Height = 13
+    Caption = 'Druckbalken Dicke in mm'
+  end
+  object CheckBox1: TCheckBox
+    Left = 56
+    Top = 252
+    Width = 163
+    Height = 17
+    Alignment = taLeftJustify
+    Caption = 'Notenfarben entfernen'
+    TabOrder = 0
+  end
+  object edtDicke: TEdit
+    Left = 178
+    Top = 230
+    Width = 41
+    Height = 21
+    TabOrder = 1
+    Text = '3.5'
+    OnExit = edtDickeExit
+    OnKeyPress = edtDickeKeyPress
+  end
 end

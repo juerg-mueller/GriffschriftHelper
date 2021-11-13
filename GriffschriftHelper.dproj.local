@@ -2,8 +2,8 @@
 <BorlandProject>
   <Transactions>
     <Transaction>2021.11.12 10:39:08.862,=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
-    <Transaction>2021.11.12 10:39:52.079,D:\git-win\GriffschriftHelper\UGriffHelper.pas=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
     <Transaction>2021.11.12 10:39:52.079,D:\git-win\GriffschriftHelper\UGriffHelper.dfm=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.dfm</Transaction>
+    <Transaction>2021.11.12 10:39:52.079,D:\git-win\GriffschriftHelper\UGriffHelper.pas=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
     <Transaction>2021.11.12 10:40:01.364,D:\git-win\GriffschriftHelper\GriffschriftHelper.dproj=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Project2.dproj</Transaction>
     <Transaction>2021.11.12 10:41:52.834,=D:\git-win\GriffschriftHelper\source\UEventArray.pas</Transaction>
     <Transaction>2021.11.12 10:41:52.844,=D:\git-win\GriffschriftHelper\source\UMidiDataStream.pas</Transaction>
@@ -22,5 +22,7 @@
     <Transaction>2021.11.13 13:40:59.039,=D:\git-win\GriffschriftHelper\UXmlNode.pas</Transaction>
     <Transaction>2021.11.13 13:40:59.069,=D:\git-win\GriffschriftHelper\UXmlParser.pas</Transaction>
     <Transaction>2021.11.13 13:42:31.292,=D:\git-win\GriffschriftHelper\UMyMidiStream.pas</Transaction>
+    <Transaction>2021.11.13 13:43:00.026,D:\git-win\GriffschriftHelper\UMyMidiStream.pas=</Transaction>
+    <Transaction>2021.11.13 13:43:25.313,=D:\git-win\GriffschriftHelper\UMyMemoryStream.pas</Transaction>
   </Transactions>
 </BorlandProject>

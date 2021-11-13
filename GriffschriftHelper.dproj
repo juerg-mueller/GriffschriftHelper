@@ -108,7 +108,7 @@
         </DCCReference>
         <DCCReference Include="UXmlNode.pas"/>
         <DCCReference Include="UXmlParser.pas"/>
-        <DCCReference Include="UMyMidiStream.pas"/>
+        <DCCReference Include="UMyMemoryStream.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

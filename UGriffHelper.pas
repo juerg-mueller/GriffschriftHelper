@@ -6,14 +6,19 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ShellApi, Vcl.StdCtrls;
 
-const
-  BellowsWidth = 0.5;
+var
+  BellowsWidth: double = 0.5;
 
 type
   TForm1 = class(TForm)
     Label1: TLabel;
+    CheckBox1: TCheckBox;
+    edtDicke: TEdit;
+    Label2: TLabel;
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
     procedure FormCreate(Sender: TObject);
+    procedure edtDickeExit(Sender: TObject);
+    procedure edtDickeKeyPress(Sender: TObject; var Key: Char);
   private
     { Private-Deklarationen }
   public
@@ -47,9 +52,31 @@ const
   NoteNames: array [0..7] of string =
     ('whole', 'half', 'quarter', 'eighth', '16th', '32nd', '64th', '128th');
 
+procedure TForm1.edtDickeExit(Sender: TObject);
+begin
+  BellowsWidth := StrToFloatDef(edtDicke.Text, 3.5);
+  if BellowsWidth < 0.2 then
+    BellowsWidth := 0.2
+  else
+  if BellowsWidth > 4 then
+    BellowsWidth := 4;
+
+  edtDicke.Text := FloatToStr(BellowsWidth);
+end;
+
+procedure TForm1.edtDickeKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    self.SelectNext(Sender as TWinControl, true, true);
+  end;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   DragAcceptFiles(Self.Handle, true);
+  edtDicke.Text := FloatToStr(BellowsWidth);
 end;
 
 procedure TForm1.WMDropFiles(var Msg: TWMDropFiles);
@@ -68,6 +95,7 @@ begin
     DroppedFileCount := DragQueryFile(DropH, $FFFFFFFF, nil, 0);
     if (DroppedFileCount > 0) then
     begin
+      edtDickeExit(nil);
       for i := 0 to DroppedFileCount-1 do
       begin
         FileNameLength := DragQueryFile(DropH, i, nil, 0);
@@ -240,7 +268,7 @@ var
   IsPull: boolean;
   hasColor: boolean;
   duration, dots: integer;
-  i, v, iStartMeasure, iStartChord: integer;
+  i, j, v, iStartMeasure, iStartChord: integer;
 begin
   result := false;
   if not KXmlParser.ParseFile(FileName, Root) then
@@ -348,6 +376,35 @@ begin
       SetPrevSpanner;
     end;
   end;
+
+  // remove blue colors
+  if Form1.CheckBox1.Checked then  
+  for i := 0 to Staff.Count-1 do
+  begin
+    Measure := Staff.ChildNodes[i];
+    if Measure.Name = 'Measure' then
+    begin
+      Measure.DeleteAttribute('id');
+      if GetChild('voice', Voice, Measure) then
+      begin
+        for v := 0 to Voice.Count-1 do
+        begin
+          Child := Voice.ChildNodes[v];
+          if (Child.Name = 'Chord') then
+          begin
+            for j := 0 to Child.Count-1 do
+            begin
+              Child1 := Child.ChildNodes[j];
+              if Child1.Name = 'Note' then
+                while GetChild('color', Child2, Child1) do
+                  Child1.RemoveChild(Child2);
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+
 
   SetLength(Filename, Length(FileName)-Length(ExtractFileExt(FileName)));
   result := Root.SaveToXmlFile(FileName + '_balg.mscx');

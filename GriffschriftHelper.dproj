@@ -87,6 +87,9 @@
         <DCC_DcuOutput>.\obj</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_DebugInfoInTds>true</DCC_DebugInfoInTds>
+        <DCC_DebugInfoInExe>false</DCC_DebugInfoInExe>
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -109,6 +112,10 @@
         <DCCReference Include="UXmlNode.pas"/>
         <DCCReference Include="UXmlParser.pas"/>
         <DCCReference Include="UMyMemoryStream.pas"/>
+        <DCCReference Include="UInstrument.pas"/>
+        <DCCReference Include="UInstrumentList.pas"/>
+        <DCCReference Include="Ujson.pas"/>
+        <DCCReference Include="UGenInstrList.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

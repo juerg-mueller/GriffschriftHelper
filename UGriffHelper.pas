@@ -12,17 +12,25 @@ var
 type
   TForm1 = class(TForm)
     Label1: TLabel;
-    CheckBox1: TCheckBox;
+    cbxRemoveColor: TCheckBox;
     edtDicke: TEdit;
     Label2: TLabel;
+    cbxInstr: TComboBox;
+    cbxKlingend: TCheckBox;
+    lbInstr: TLabel;
+    cbxTranspose: TComboBox;
+    lblTranspose: TLabel;
+    cxbPressure: TCheckBox;
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
     procedure FormCreate(Sender: TObject);
     procedure edtDickeExit(Sender: TObject);
     procedure edtDickeKeyPress(Sender: TObject; var Key: Char);
+    procedure cbxKlingendClick(Sender: TObject);
+    procedure cxbPressureClick(Sender: TObject);
   private
     { Private-Deklarationen }
   public
-    { Public-Deklarationen }
+    function InsertBellows(FileName: string): boolean;
   end;
 
   THeader = record
@@ -37,7 +45,8 @@ type
 var
   Form1: TForm1;
 
-function InsertBellows(FileName: string): boolean;
+const MuseScoreTPC : array [0..11] of byte =
+      (14, 14, 16, 16, 18, 13, 13, 15, 15, 17, 19, 19);
 
 
 implementation
@@ -45,12 +54,26 @@ implementation
 {$R *.dfm}
 
 uses
-  UXmlNode, UXmlParser;
+  UXmlNode, UXmlParser, UInstrument, UInstrumentList;
 
 
 const
   NoteNames: array [0..7] of string =
     ('whole', 'half', 'quarter', 'eighth', '16th', '32nd', '64th', '128th');
+
+procedure TForm1.cbxKlingendClick(Sender: TObject);
+begin
+  cbxInstr.Enabled := cbxKlingend.Checked;
+  lbInstr.Enabled := cbxKlingend.Checked;
+  lblTranspose.Enabled := cbxKlingend.Checked;
+  cbxTranspose.Enabled := cbxKlingend.Checked;
+end;
+
+procedure TForm1.cxbPressureClick(Sender: TObject);
+begin
+  edtDicke.Enabled := cxbPressure.Checked;
+  Label2.Enabled := cxbPressure.Checked;
+end;
 
 procedure TForm1.edtDickeExit(Sender: TObject);
 begin
@@ -74,9 +97,18 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  i: integer;
 begin
   DragAcceptFiles(Self.Handle, true);
   edtDicke.Text := FloatToStr(BellowsWidth);
+
+  for i := 0 to Length(InstrumentsList)-1 do
+    cbxInstr.Items.Add(InstrumentsList[i].Name);
+  cbxInstr.ItemIndex := 1;
+
+  cbxKlingendClick(nil);
+  cxbPressureClick(nil);
 end;
 
 procedure TForm1.WMDropFiles(var Msg: TWMDropFiles);
@@ -133,14 +165,14 @@ var
 begin
   k := 0;
   result := false;
-  Child := nil;
-
   while not result and (Parent <> nil) and (k < Parent.Count) do
   begin
     Child := Parent.ChildNodes[k];
     inc(k);
     result := Child.Name = Name;
   end;
+  if not result then
+    Child := nil;
 end;
 
 function THeader.TicksPerMeasure: integer;
@@ -180,10 +212,77 @@ begin
   Child.AppendAttr('y', '0');
 end;
 
-function InsertBellows(FileName: string): boolean;
+procedure CheckNote(const Instrument: TInstrument; Note: KXmlNode);
+var
+  Cross, Pull: boolean;
+  Symbol, color, Events, Event, pitchNode, tpc, Child: KXmlNode;
+  pitchIdx: integer;
+  Line: integer;
+  Pitch, klingPitch: integer;
+  row: integer;
+begin
+  Cross := GetChild('Symbol', Symbol, Note);
+  if not Cross then
+  begin
+    if GetChild('head', Symbol, Note) and
+       ((Symbol.Value = 'cross') or (Symbol.Value = 'x')) then
+      Cross := true;
+  end;
+
+  Pull := GetChild('color', color, Note);  // !!!!! not
+  GetChild('Events', Events, Note);
+  GetChild('pitch', pitchNode, Note);
+  pitchIdx := Note.GetChildIndex(pitchNode);
+  GetChild('tpc', tpc, Note);
+  if Events = nil then
+  begin
+    Events := KXmlNode.Create;
+    Events.Name := 'Events';
+    Note.InsertChildNode(pitchIdx, Events);
+    inc(pitchIdx);
+  end;
+  if not GetChild('Event', Event, Events) then
+    Event := Events.AppendChildNode('Event');
+  if not GetChild('pitch', Child, Event) then
+    Event.AppendChildNode('pitch');
+
+  if tpc = nil then
+  begin
+    tpc := KXmlNode.Create;
+    tpc.Name := 'tpc';
+    PitchNode.InsertChildNode(pitchIdx+1, tpc);
+  end;
+  Pitch := StrToInt(pitchNode.Value);
+  writeln(pitch);
+  Line := GetPitchLine(Pitch);
+  if Line > 0 then
+    dec(Line);
+  if odd(Line) then
+    row := 2
+  else
+    row := 1;
+  if Cross then
+    inc(row, 2);
+
+  klingPitch := Instrument.GetPitch(row, Line div 2, not Pull);
+  if klingPitch = 0 then
+    klingPitch := Pitch;
+  tpc.Value := IntToStr(MuseScoreTPC[Pitch mod 12]);
+  Child := Event.HasChild('pitch');
+  if klingPitch <> Pitch then
+  begin
+    if Child = nil then
+      Child := Event.AppendChildNode('pitch');
+    Child.Value := IntToStr(klingPitch - Pitch);
+  end else
+  if Child <> nil then
+    Event.RemoveChild(Child);
+end;
+
+function TForm1.InsertBellows(FileName: string): boolean;
 var
   Root: KXmlNode;
-  Score, Staff, Measure, Voice, Chord, Child, Child1, Child2: KXmlNode;
+  Score, Staff, Measure, Voice, Chord, Note, Child, Child1, Child2: KXmlNode;
   NextSpanner: KXmlNode;
   Spanner, TextLine: KXmlNode;
   offset: integer;
@@ -266,13 +365,30 @@ var
 
 var
   IsPull: boolean;
-  hasColor: boolean;
   duration, dots: integer;
-  i, j, v, iStartMeasure, iStartChord: integer;
+  hasColor: boolean;
+  i, j, v, iMeasure: integer;
+  removeColor: boolean;
+  Instrument: TInstrument;
+  useInstrument: boolean;
+  hasColors, hasTextLines: boolean;
+  InsertBellows: boolean;
 begin
   result := false;
+  useInstrument := false;
+  removeColor := cbxRemoveColor.Checked;
+  InsertBellows := cxbPressure.Checked;
   if not KXmlParser.ParseFile(FileName, Root) then
     exit;
+
+  if cbxKlingend.Checked and
+     (cbxInstr.ItemIndex >= 0) then
+  begin
+    useInstrument := true;
+    Instrument := InstrumentsList[cbxInstr.ItemIndex]^;
+    if cbxTranspose.ItemIndex <> 11 then
+      Instrument.Transpose(cbxTranspose.ItemIndex - 11);
+  end;
 
   Score := Root.ChildNodes[Root.Count-1];
   if (Score.Name <> 'Score') or
@@ -284,7 +400,9 @@ begin
 
   SetHeader;
 
-  // remove all "spanner  with type textline"
+  // find textline and color
+  hasColors := false;
+  hasTextLines := false;
   for i := 0 to Staff.Count-1 do
   begin
     Measure := Staff.ChildNodes[i];
@@ -299,112 +417,202 @@ begin
           Child := Voice.ChildNodes[v];
           if (Child.Name = 'Spanner') and
              (Child.Attributes['type'] = 'TextLine')  then
-            Voice.PurgeChild(v)
-          else
-            inc(v);
-        end;
-      end;
-    end;
-  end;
-
-  IsPull := true;
-  iStartMeasure := -1;
-  iStartChord := 0;
-  offset := 0;
-  v := 0;
-  for i := 0 to Staff.Count-1 do
-  begin
-    Measure := Staff.ChildNodes[i];
-    if Measure.Name = 'Measure' then
-    begin
-      if GetChild('voice', Voice, Measure) then
-      begin
-        v := 0;
-        while v < Voice.Count do
-        begin
-          Chord := Voice.ChildNodes[v];
-          if GetChild('durationType', Child, Chord) then
-          begin
-            duration := GetFraction(Child.Value);
-            dots := 0;
-            if GetChild('dots', Child, Chord) then
-              dots := StrToIntDef(Child.Value, 0);
-            if (Chord.Name = 'Chord') and
-               GetChild('Note', Child, Chord) then
-            begin
-              hasColor := GetChild('color', Child1, Child);
-              if IsPull <> hasColor then
-              begin
-                IsPull := hasColor;
-                Spanner := KXmlNode.Create;
-                Spanner.Name := 'Spanner';
-                Spanner.AppendAttr('type', 'TextLine');
-                if not IsPull then
-                begin
-                  SpannerOffset := offset;
-                  NextSpanner := Spanner;
-                  Voice.InsertChildNode(v, Spanner);
-                  TextLine := Spanner.AppendChildNode('TextLine');
-                  TextLine.AppendChildNode('placement', 'below');
-                  TextLine.AppendChildNode('lineWidth', Format('%g', [BellowsWidth]));
-                  AddSubtype(TextLine, '0', '3.5');
-                  AddSubtype(TextLine, '3', '3.5');
-                end else begin
-                  Voice.InsertChildNode(v, Spanner);
-                  SetPrevSpanner;
-                end;
-              end; // IsPull <> hasColor
-            end;
-            inc(offset, Header.GetChordTicks(duration, dots));
-          end;
+            hasTextLines := true;
+          if (Child.Name = 'Chord') and
+             GetChild('Note', Child1, Child) and
+             GetChild('color', Child2, Child1) then
+            hasColors := true;
           inc(v);
         end;
-      end
+      end;
     end;
   end;
 
-  if NextSpanner <> nil then
+  // reinsert colors
+  if hasTextLines and not hasColors then
   begin
-    Spanner := KXmlNode.Create;
-    Spanner.Name := 'Spanner';
-    Spanner.AppendAttr('type', 'TextLine');
-
-    if GetChild('voice', Voice, Staff.ChildNodes[Staff.Count-1]) then
+    IsPull := true;
+    for i := 0 to Staff.Count-1 do
     begin
-      Voice.InsertChildNode(v, Spanner);
-
-      SetPrevSpanner;
-    end;
-  end;
-
-  // remove blue colors
-  if Form1.CheckBox1.Checked then  
-  for i := 0 to Staff.Count-1 do
-  begin
-    Measure := Staff.ChildNodes[i];
-    if Measure.Name = 'Measure' then
-    begin
-      Measure.DeleteAttribute('id');
-      if GetChild('voice', Voice, Measure) then
+      Measure := Staff.ChildNodes[i];
+      if Measure.Name = 'Measure' then
       begin
-        for v := 0 to Voice.Count-1 do
+        Measure.DeleteAttribute('id');
+        if GetChild('voice', Voice, Measure) then
         begin
-          Child := Voice.ChildNodes[v];
-          if (Child.Name = 'Chord') then
+          v := 0;
+          while v < Voice.Count do
           begin
-            for j := 0 to Child.Count-1 do
+            Child := Voice.ChildNodes[v];
+            if (Child.Name = 'Spanner') and
+               (Child.Attributes['type'] = 'TextLine')  then
             begin
-              Child1 := Child.ChildNodes[j];
-              if Child1.Name = 'Note' then
-                while GetChild('color', Child2, Child1) do
-                  Child1.RemoveChild(Child2);
+              IsPull := GetChild('prev', Child1, Child);
+            end;
+            if IsPull and
+               (Child.Name = 'Chord') then
+            begin
+              for j := 0 to Child.Count-1 do
+              begin
+                Child1 := Child.ChildNodes[j];
+                if Child1.Name = 'Note' then
+                begin
+                  Child2 := KXmlNode.Create;
+                  Child2.Name := 'color';
+                  Child2.AppendAttr('r', '0');
+                  Child2.AppendAttr('g', '0');
+                  Child2.AppendAttr('b', '255');
+                  Child2.AppendAttr('a', '255');
+                  Child1.InsertChildNode(0, Child2);
+                end;
+              end;
+            end;
+            inc(v);
+          end;
+        end;
+      end;
+    end;
+    hasColors := true;
+  end;
+
+  if hasColors then
+  begin
+    // remove all "spanner  with type textline"
+    if hasTextLines then
+      for i := 0 to Staff.Count-1 do
+      begin
+        Measure := Staff.ChildNodes[i];
+        if Measure.Name = 'Measure' then
+        begin
+          Measure.DeleteAttribute('id');
+          if GetChild('voice', Voice, Measure) then
+          begin
+            v := 0;
+            while v < Voice.Count do
+            begin
+              Child := Voice.ChildNodes[v];
+              if (Child.Name = 'Spanner') and
+                 (Child.Attributes['type'] = 'TextLine')  then
+                Voice.PurgeChild(v)
+              else
+                inc(v);
+            end;
+          end;
+        end;
+      end;
+
+    IsPull := true;
+    iMeasure := 0;
+    offset := 0;
+    v := 0;
+    for i := 0 to Staff.Count-1 do
+    begin
+      Measure := Staff.ChildNodes[i];
+      if Measure.Name = 'Measure' then
+      begin
+        inc(iMeasure);
+        Measure.AppendAttr('id', IntToStr(iMeasure));
+        if GetChild('voice', Voice, Measure) then
+        begin
+          v := 0;
+          while v < Voice.Count do
+          begin
+            Chord := Voice.ChildNodes[v];
+            if GetChild('durationType', Child, Chord) then
+            begin
+              duration := GetFraction(Child.Value);
+              dots := 0;
+              if GetChild('dots', Child, Chord) then
+                dots := StrToIntDef(Child.Value, 0);
+            end;
+            if Chord.Name = 'Chord' then
+            begin
+              for j := 0 to Chord.Count-1 do
+              begin
+                Note := Chord.ChildNodes[j];
+                if Note.Name = 'Note' then
+                begin
+                  hasColor := GetChild('color', Child1, Note);
+                  if (IsPull <> hasColor) and
+                     InsertBellows then
+                  begin
+                    IsPull := hasColor;
+                    Spanner := KXmlNode.Create;
+                    Spanner.Name := 'Spanner';
+                    Spanner.AppendAttr('type', 'TextLine');
+                    if not IsPull then
+                    begin
+                      SpannerOffset := offset;
+                      NextSpanner := Spanner;
+                      Voice.InsertChildNode(v, Spanner);
+                      TextLine := Spanner.AppendChildNode('TextLine');
+                      TextLine.AppendChildNode('placement', 'below');
+                      TextLine.AppendChildNode('lineWidth', Format('%g', [BellowsWidth]));
+                      AddSubtype(TextLine, '0', '3.5');
+                      AddSubtype(TextLine, '3', '3.5');
+                    end else begin
+                      Voice.InsertChildNode(v, Spanner);
+                      SetPrevSpanner;
+                    end;
+                    inc(v);
+                  end; // IsPull <> hasColor
+                  if useInstrument then
+                    CheckNote(Instrument, Note);
+                end;
+              end; // for j := 0 to Chord.Count-1 do
+              inc(offset, Header.GetChordTicks(duration, dots));
+            end;
+            inc(v);
+          end;
+        end
+      end;
+    end;
+
+    if (NextSpanner <> nil) and
+       InsertBellows then
+    begin
+      Spanner := KXmlNode.Create;
+      Spanner.Name := 'Spanner';
+      Spanner.AppendAttr('type', 'TextLine');
+
+      if GetChild('voice', Voice, Staff.ChildNodes[Staff.Count-1]) then
+      begin
+        Voice.InsertChildNode(v, Spanner);
+
+        SetPrevSpanner;
+      end;
+    end;
+
+    // remove blue colors
+    if removeColor then
+    begin
+      for i := 0 to Staff.Count-1 do
+      begin
+        Measure := Staff.ChildNodes[i];
+        if Measure.Name = 'Measure' then
+        begin
+          Measure.DeleteAttribute('id');
+          if GetChild('voice', Voice, Measure) then
+          begin
+            for v := 0 to Voice.Count-1 do
+            begin
+              Child := Voice.ChildNodes[v];
+              if (Child.Name = 'Chord') then
+              begin
+                for j := 0 to Child.Count-1 do
+                begin
+                  Child1 := Child.ChildNodes[j];
+                  if Child1.Name = 'Note' then
+                    while GetChild('color', Child2, Child1) do
+                      Child1.RemoveChild(Child2);
+                end;
+              end;
             end;
           end;
         end;
       end;
     end;
-  end;
-
+  end; // hasColor
 
   SetLength(Filename, Length(FileName)-Length(ExtractFileExt(FileName)));
   result := Root.SaveToXmlFile(FileName + '_balg.mscx');

@@ -5,7 +5,11 @@ uses
   UGriffHelper in 'UGriffHelper.pas' {Form1},
   UXmlNode in 'UXmlNode.pas',
   UXmlParser in 'UXmlParser.pas',
-  UMyMidiStream in 'UMyMidiStream.pas';
+  UMyMemoryStream in 'UMyMemoryStream.pas',
+  UInstrument in 'UInstrument.pas',
+  UInstrumentList in 'UInstrumentList.pas',
+  Ujson in 'Ujson.pas',
+  UGenInstrList in 'UGenInstrList.pas';
 
 {$R *.res}
 

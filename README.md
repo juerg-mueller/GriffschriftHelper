@@ -11,3 +11,6 @@ https://musescore.org/en/node/315330
 Can insert sounding notes anew.
 
 ![Helper](https://user-images.githubusercontent.com/14039478/141803085-dba239f4-a740-4d15-97f1-9c7bdd9d9175.png)
+
+11/18/21:
+Saves in *_balg.mscz file

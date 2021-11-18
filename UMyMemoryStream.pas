@@ -64,6 +64,7 @@ type
     procedure SkipBytes(c: cardinal);
     function BulkRead(p: PByte; length: integer): boolean;
     function BulkWrite(p: PByte; length: integer): boolean;
+    function MakeBytes: TBytes;
   end;
 
 implementation
@@ -337,6 +338,11 @@ begin
   result := true;
 end;
 
+function TMyMemoryStream.MakeBytes: TBytes;
+begin
+  SetLength(result, Size);
+  Move(PByte(Memory)[0], result[0], Size);
+end;
 
 
 end.

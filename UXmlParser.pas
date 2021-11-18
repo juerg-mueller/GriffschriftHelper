@@ -12,7 +12,7 @@ type
   // body ::= [comment] "<" Name (attribute)* ( "/>" | ">" (body)* "</" Name ">")
   // attribute ::= AttributeId "="  """"  Value  """"
   // alternativ "comment":   <!-- comment -->
-  KXmlParser = class(TMemoryStream)
+  KXmlParser = class(TMyMemoryStream)
     private
       stream: string;
       mActualPos: integer;      // actual parser position

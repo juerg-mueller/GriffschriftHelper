@@ -21,6 +21,7 @@ type
     cbxTranspose: TComboBox;
     lblTranspose: TLabel;
     cxbPressure: TCheckBox;
+    Memo1: TMemo;
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
     procedure FormCreate(Sender: TObject);
     procedure edtDickeExit(Sender: TObject);
@@ -253,7 +254,6 @@ begin
     PitchNode.InsertChildNode(pitchIdx+1, tpc);
   end;
   Pitch := StrToInt(pitchNode.Value);
-  writeln(pitch);
   Line := GetPitchLine(Pitch);
   if Line > 0 then
     dec(Line);
@@ -615,7 +615,7 @@ begin
   end; // hasColor
 
   SetLength(Filename, Length(FileName)-Length(ExtractFileExt(FileName)));
-  result := Root.SaveToXmlFile(FileName + '_balg.mscx');
+  result := Root.SaveToMsczFile(FileName + '_balg.mscx');
 end;
 
 end.

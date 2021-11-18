@@ -3,7 +3,7 @@ unit UXmlNode;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, System.Zip,
   UMyMemoryStream;
 
 type
@@ -34,6 +34,8 @@ type
     procedure AppendAttr(Name_, Value_: string); overload;
     procedure AppendAttr(Name_: string; Value_: integer); overload;
     function SaveToXmlFile(const FileName: string; Header: string = ''): boolean;
+    function SaveToStream(const Header: string): TMyMemoryStream;
+    function SaveToMsczFile(FileName: string): boolean;
     procedure BuildStream(Stream: TMyMemoryStream; Level: integer; Wln: boolean);
     procedure RemoveChild(Child: KXmlNode);
     function GetChildIndex(Child: KXmlNode): integer;
@@ -343,21 +345,77 @@ end;
 
 function KXmlNode.SaveToXmlFile(const FileName: string; Header: string): boolean;
 var
-  i, l: integer;
   Stream: TMyMemoryStream;
 begin
-  Stream := BuildMemoryStream(self);
-  l := Length(Header);
-  if l > 0 then  
+  result := false;
+  Stream := SaveToStream(Header);
+  if Stream <> nil then
   begin
-    Stream.Size := Stream.Size + l;
-    for i := Stream.Size - 1 downto 0 do
-      PAnsiChar(Stream.Memory)[i+l] := PAnsiChar(Stream.Memory)[i];
-    for i := 1 to l do
-      PAnsiChar(Stream.Memory)[i-1] := AnsiChar(Header[i]);
+    Stream.SaveToFile(FileName);
+    Stream.Free;
+    result := true;
   end;
-  Stream.SaveToFile(FileName);
-  result := true;
+end;
+
+function KXmlNode.SaveToStream(const Header: string): TMyMemoryStream;
+var
+  i, l: integer;
+begin
+  result := BuildMemoryStream(self);
+  if result = nil then
+    exit;
+
+  l := Length(Header);
+  if l > 0 then
+  begin
+    result.Size := result.Size + l;
+    for i := result.Size - 1 downto 0 do
+      PAnsiChar(result.Memory)[i+l] := PAnsiChar(result.Memory)[i];
+    for i := 1 to l do
+      PAnsiChar(result.Memory)[i-1] := AnsiChar(Header[i]);
+  end;
+end;
+
+{
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+  <rootfiles>
+    <rootfile full-path="%s.mscx">
+      </rootfile>
+    </rootfiles>
+  </container>
+
+}
+
+function KXmlNode.SaveToMsczFile(FileName: string): boolean;
+var
+  container, child: KXmlNode;
+  Stream: TMyMemoryStream;
+  conStr: TMyMemoryStream;
+  Zip: TZipFile;
+begin
+  result := false;
+  Stream := BuildMemoryStream(self);
+  if Stream <> nil then
+  begin
+    SetLength(FileName, Length(FileName)-Length(ExtractFileExt(FileName)));
+    container := KXmlNode.Create;
+    container.Name := 'container';
+    child := container.AppendChildNode('rootfiles');
+    child := child.AppendChildNode('rootfile');
+    child.AppendAttr('full-path', ExtractFileName(FileName) + '.mscx');
+    conStr := container.SaveToStream('<?xml version="1.0" encoding="UTF-8"?>'#13#10);
+
+    Zip := TZipFile.Create;
+    Zip.Open(FileName + '.mscz', zmWrite);
+    Zip.Add(Stream.MakeBytes, ExtractFileName(FileName) + '.mscx');
+    Zip.Add(conStr.MakeBytes, 'META-INF/container.xml');
+    Zip.Free;
+
+    Stream.Free;
+    conStr.Free;
+    result := true;
+  end;
 end;
 
 function KXmlNode.GetXmlValue: AnsiString;

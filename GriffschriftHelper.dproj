@@ -112,7 +112,6 @@
         <DCCReference Include="UXmlParser.pas"/>
         <DCCReference Include="UMyMemoryStream.pas"/>
         <DCCReference Include="UInstrument.pas"/>
-        <DCCReference Include="UInstrumentList.pas"/>
         <DCCReference Include="Ujson.pas"/>
         <DCCReference Include="UGenInstrList.pas"/>
         <BuildConfiguration Include="Release">

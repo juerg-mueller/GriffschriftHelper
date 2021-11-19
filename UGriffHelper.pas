@@ -21,7 +21,6 @@ type
     cbxTranspose: TComboBox;
     lblTranspose: TLabel;
     cxbPressure: TCheckBox;
-    Memo1: TMemo;
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
     procedure FormCreate(Sender: TObject);
     procedure edtDickeExit(Sender: TObject);
@@ -55,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-  UXmlNode, UXmlParser, UInstrument, UInstrumentList;
+  UXmlNode, UXmlParser, UInstrument, UGenInstrList;
 
 
 const
@@ -104,8 +103,8 @@ begin
   DragAcceptFiles(Self.Handle, true);
   edtDicke.Text := FloatToStr(BellowsWidth);
 
-  for i := 0 to Length(InstrumentsList)-1 do
-    cbxInstr.Items.Add(InstrumentsList[i].Name);
+  for i := 0 to Length(InstrumentList)-1 do
+    cbxInstr.Items.Add(InstrumentList[i].Name);
   cbxInstr.ItemIndex := 1;
 
   cbxKlingendClick(nil);
@@ -385,7 +384,7 @@ begin
      (cbxInstr.ItemIndex >= 0) then
   begin
     useInstrument := true;
-    Instrument := InstrumentsList[cbxInstr.ItemIndex]^;
+    Instrument := InstrumentList[cbxInstr.ItemIndex];
     if cbxTranspose.ItemIndex <> 11 then
       Instrument.Transpose(cbxTranspose.ItemIndex - 11);
   end;

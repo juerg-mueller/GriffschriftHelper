@@ -107,7 +107,7 @@ var
     else
     if Copy(Note, 2, 2) = 'is' then
       inc(result);
-    inc(result, 36);
+    inc(result, 48);
     i := Length(Note);
     while (i > 0) and (AnsiChar(Note[i]) in ['''', ',']) do
     begin

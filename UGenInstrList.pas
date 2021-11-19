@@ -2,14 +2,13 @@ unit UGenInstrList;
 
 interface
 uses
-  SysUtils, Classes, IOUtils,
+  SysUtils, Classes, IOUtils, Vcl.Forms,
   UInstrument, Ujson, UMyMemoryStream;
-
-
-implementation
 
 var
   InstrumentList: array of TInstrument;
+
+implementation
 
 const
   FlatNotes  : array [0..11] of string = ('C', 'Des', 'D', 'Es', 'E', 'F', 'Ges', 'G', 'As', 'A', 'B', 'H');
@@ -25,7 +24,6 @@ end;
 
 procedure PrintInstrument(var stream: TMyMemoryStream; Instrument: TInstrument; Nr: integer);
 var
-  j: integer;
   Instr: string;
 
   procedure PrintPitchArr(const Arr: TPitchArray; const gap: string);
@@ -88,30 +86,38 @@ begin
   end;
 end;
 
-procedure GenerateInstrList(Path: string);
+procedure ReadInstruments(Path: string);
 var
-  Instrument: TInstrument;
   SR      : TSearchRec;
   DirList : TStringList;
   i: integer;
-  stream: TMyMemoryStream;
 begin
   SetLength(InstrumentList, 0);
   DirList := TStringList.Create;
+  if FindFirst(Path + '*.json', faArchive, SR) = 0 then
+  begin
+    repeat
+      DirList.Add(SR.Name); //Fill the list
+    until FindNext(SR) <> 0;
+    FindClose(SR);
+  end;
+
+  for i := 0 to DirList.Count-1 do
+    AddInstrument(Path + DirList[i]);
+
+  DirList.Free;
+
+  if Length(InstrumentList) = 0 then
+    Application.MessageBox('No instruments found!', 'Warning');
+end;
+
+procedure GenerateInstrList;
+var
+  i: integer;
+  stream: TMyMemoryStream;
+begin
   stream := TMyMemoryStream.Create;
   try
-    if FindFirst(Path + '*.json', faArchive, SR) = 0 then
-    begin
-      repeat
-        DirList.Add(SR.Name); //Fill the list
-      until FindNext(SR) <> 0;
-      FindClose(SR);
-    end;
-
-    for i := 0 to DirList.Count-1 do
-      AddInstrument(Path + DirList[i]);
-
-
     stream.WritelnString('unit UInstrumentList;');
     stream.Writeln;
     stream.WritelnString('interface');
@@ -125,11 +131,11 @@ begin
       PrintInstrument(stream, InstrumentList[i], i);
 
     stream.WritelnString('type');
-    stream.WritelnString('  TInstrumentsList = array [0..' + IntToStr(Length(InstrumentList)-1) + '] of PInstrument;');
+    stream.WritelnString('  TInstrumentList = array [0..' + IntToStr(Length(InstrumentList)-1) + '] of PInstrument;');
 
     stream.Writeln;
     stream.WritelnString('const');
-    stream.WritelnString('  InstrumentsList : TInstrumentsList = (');
+    stream.WritelnString('  InstrumentList : TInstrumentList = (');
     for i := 0 to Length(InstrumentList)-1 do
     begin
       if i > 0 then
@@ -146,12 +152,12 @@ begin
 
     stream.SaveToFile('UInstrumentList.pas');
   finally
-    DirList.Free;
     stream.Free;
   end;
 end;
 
 begin
-//  GenerateInstrList('json/');
+  ReadInstruments('instruments/');
+//  GenerateInstrList;
 end.
 

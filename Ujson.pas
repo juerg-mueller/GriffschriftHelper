@@ -170,7 +170,6 @@ var
   c: AnsiChar;
   Comma: boolean;
   NewNode: Tjson;
-  s: AnsiString;
 
   function GetString: AnsiString;
   var

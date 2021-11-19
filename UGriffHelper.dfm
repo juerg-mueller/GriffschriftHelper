@@ -148,21 +148,4 @@ object Form1: TForm1
     TabOrder = 1
     OnClick = cxbPressureClick
   end
-  object Memo1: TMemo
-    Left = 238
-    Top = 8
-    Width = 185
-    Height = 106
-    Lines.Strings = (
-      '<?xml version="1.0" '
-      'encoding="UTF-8"?>'
-      '<container>'
-      '  <rootfiles>'
-      '    <rootfile full-path="%s.mscx">'
-      '      </rootfile>'
-      '    </rootfiles>'
-      '  </container>')
-    TabOrder = 6
-    Visible = False
-  end
 end

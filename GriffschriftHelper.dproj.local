@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.862,=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.079,D:\git-win\GriffschriftHelper\UGriffHelper.pas=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.048,=D:\git-win\GriffschriftHelper\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.069,=D:\git-win\GriffschriftHelper\UXmlParser.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.117,D:\git-win\GriffschriftHelper\source\UMuseScoreHelper.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.844,=D:\git-win\GriffschriftHelper\source\UMidiDataStream.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.072,D:\git-win\GriffschriftHelper\source\UMidiDataStream.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.460,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\UInstrument.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.079,D:\git-win\GriffschriftHelper\UGriffHelper.dfm=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.993,=D:\git-win\GriffschriftHelper\UInstrumentList.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.039,=D:\git-win\GriffschriftHelper\UXmlNode.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.913,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\UGenInstrList.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.711,=D:\git-win\GriffschriftHelper\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.672,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\Ujson.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.341,=D:\git-win\GriffschriftHelper\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.913,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\UGenInstrList.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.048,=D:\git-win\GriffschriftHelper\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.864,=D:\git-win\GriffschriftHelper\source\UMuseScoreHelper.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.117,D:\git-win\GriffschriftHelper\source\UMuseScoreHelper.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.862,=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.460,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\UInstrument.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.692,D:\git-win\GriffschriftHelper\source\UEventArray.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.834,=D:\git-win\GriffschriftHelper\source\UEventArray.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.039,=D:\git-win\GriffschriftHelper\UXmlNode.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.079,D:\git-win\GriffschriftHelper\UGriffHelper.dfm=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.672,D:\git-win\GriffschriftHelper\Unit1.pas=D:\git-win\GriffschriftHelper\Ujson.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.069,=D:\git-win\GriffschriftHelper\UXmlParser.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.993,=D:\git-win\GriffschriftHelper\UInstrumentList.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.884,=D:\git-win\GriffschriftHelper\source\UMyMemoryStream.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.805,D:\git-win\GriffschriftHelper\source\UMyMemoryStream.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.026,D:\git-win\GriffschriftHelper\UMyMidiStream.pas=</Transaction>
@@ -24,12 +24,13 @@
     <Transaction>1899.12.30 00:00:00.000.892,D:\git-win\GriffschriftHelper\source\UMyMidiStream.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.235,D:\git-win\GriffschriftHelper\source\UXmlNode.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.292,=D:\git-win\GriffschriftHelper\UMyMidiStream.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.692,D:\git-win\GriffschriftHelper\source\UEventArray.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.834,=D:\git-win\GriffschriftHelper\source\UEventArray.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.864,=D:\git-win\GriffschriftHelper\source\UMuseScoreHelper.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.865,D:\git-win\GriffschriftHelper\source\UXmlParser.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.072,D:\git-win\GriffschriftHelper\source\UMidiDataStream.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.844,=D:\git-win\GriffschriftHelper\source\UMidiDataStream.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.079,D:\git-win\GriffschriftHelper\UGriffHelper.pas=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.313,=D:\git-win\GriffschriftHelper\UMyMemoryStream.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.364,D:\git-win\GriffschriftHelper\GriffschriftHelper.dproj=C:\Users\Jürg Müller\Documents\Embarcadero\Studio\Projekte\Project2.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.934,=D:\git-win\GriffschriftHelper\source\UXmlParser.pas</Transaction>
+    <Transaction>2021.11.19 06:41:13.902,D:\git-win\GriffschriftHelper\UInstrumentList.pas=</Transaction>
   </Transactions>
 </BorlandProject>

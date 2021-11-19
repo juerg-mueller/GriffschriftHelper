@@ -14,3 +14,6 @@ Can insert sounding notes anew.
 
 11/18/21:
 Saves in *_balg.mscz file
+
+11/19/21:
+Dynamically loads the instruments from the instruments folder.

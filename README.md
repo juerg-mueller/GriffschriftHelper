@@ -17,3 +17,6 @@ Saves in *_balg.mscz file
 
 11/19/21:
 Dynamically loads the instruments from the instruments folder.
+
+04/06/22:
+64 bit version added (for Mac M1)

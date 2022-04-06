@@ -27,6 +27,8 @@ type
     procedure edtDickeKeyPress(Sender: TObject; var Key: Char);
     procedure cbxKlingendClick(Sender: TObject);
     procedure cxbPressureClick(Sender: TObject);
+    procedure cbxTransposeChange(Sender: TObject);
+    procedure cbxInstrChange(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -61,12 +63,22 @@ const
   NoteNames: array [0..7] of string =
     ('whole', 'half', 'quarter', 'eighth', '16th', '32nd', '64th', '128th');
 
+procedure TForm1.cbxInstrChange(Sender: TObject);
+begin
+//
+end;
+
 procedure TForm1.cbxKlingendClick(Sender: TObject);
 begin
   cbxInstr.Enabled := cbxKlingend.Checked;
   lbInstr.Enabled := cbxKlingend.Checked;
   lblTranspose.Enabled := cbxKlingend.Checked;
   cbxTranspose.Enabled := cbxKlingend.Checked;
+end;
+
+procedure TForm1.cbxTransposeChange(Sender: TObject);
+begin
+//
 end;
 
 procedure TForm1.cxbPressureClick(Sender: TObject);
@@ -109,6 +121,12 @@ begin
 
   cbxKlingendClick(nil);
   cxbPressureClick(nil);
+
+{$ifdef WIN64}
+  Caption := Caption + ' (64 Bit)';
+{$else}
+  Caption := Caption + ' (32 Bit)';
+{$endif}
 end;
 
 procedure TForm1.WMDropFiles(var Msg: TWMDropFiles);

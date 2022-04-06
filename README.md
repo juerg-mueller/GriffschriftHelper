@@ -6,6 +6,7 @@ Mit dem Plugin von Nurfz erfassten Griffschrift-Noten, können mit diesem Helper
 
 https://musescore.org/en/node/315330
 
+Please contect me in: https://musescore.org/de/node/326484
 
 11/15/21: 
 Can insert sounding notes anew.
